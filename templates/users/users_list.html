@@ -1,0 +1,70 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+
+    <div class="container" style="padding-top: 5%;">
+        <form method="get">
+            <div class="float-right">
+            {{ object_list.form.as_p }}
+            </div><br/>
+            <br/>
+            <input type="submit" value="press" class="form-control float-right btn btn-primary" style="width: 80px;"/>
+        </form>
+        <div>
+            <div style="text-align: center;">
+                <table class="table">
+                    <thead>
+                        <th>S No.</th>
+                        <th>Name</th>
+                        <th>User Name</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <!-- <th>Email</th> -->
+                        <th>Role</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {% for user in object_list.qs %}
+                        <tr class="
+                        {% if user.role == 'shop' and user.allow_by_admin == True %}text-primary{% endif %}
+                        {% if user.role == 'shop' and user.allow_by_admin == False %}text-danger{% endif %}
+                        {% if user.role == 'customer' %}text-primary{% endif %}
+                        {% if user.role == 'admin' %}text-success{% endif %}">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.last_name }}</td>
+                            <!-- <td>{{ user.email }}</td> -->
+                            <td>{{ user.role }}</td>
+                            {% if user.role == 'shop' %}
+                                {% if user.allow_by_admin == True %}
+                                    <td>
+                                        <form action="/users/user_list#{{user.id}}" method="POST" class="btn-block">
+                                            {% csrf_token %}
+                                            <input hidden type="text" name='user_unapprove' value='{{user.id}}'>
+                                            <input type="submit" class="float-right btn btn-danger  form-control"
+                                                value="Unapprove">
+                                        </form>
+                                    </td>
+                                {% endif %}
+                                {% if user.allow_by_admin == False %}
+                                <td>
+                                    <form action="/users/user_list#{{user.id}}" method="POST" class="btn-block">
+                                        {% csrf_token %}
+                                        <input hidden type="text" name='user' value='{{user.id}}'>
+                                        <input type="submit" class="float-right btn btn-light  form-control"
+                                            value="Approve">
+                                    </form>
+                                </td>
+                                {% endif %}
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
