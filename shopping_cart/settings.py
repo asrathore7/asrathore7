@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.account',
     'authentication',
+    'shop',
 ]
 
 MIDDLEWARE = [
@@ -154,6 +155,9 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 AUTH_USER_MODEL = "authentication.User"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # To set up email verification to be mandatory
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS =1

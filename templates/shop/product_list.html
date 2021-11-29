@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+<div class="container" style="padding-top: 5%;">
+    <div style="float: right; margin-bottom: 20px;">
+        <form method="get">
+            <span class="float-right">
+            {{ object_list.form.as_p }}
+            </span>
+            <input type="submit" value="Check" class="form-control float-right btn btn-primary"/>
+        </form>
+    </div>
+    <div>
+        <div>
+            <table class="table" style="text-align: center;">
+                <thead>
+                    <th>S No.</th>
+                    <th>Logo</th>
+                    <th>Product Name</th>
+                    <th>Shop</th>
+                    <th>Purchase Price</th>
+                    <th>Sale Price</th>
+                    <th>MFG Date</th>
+                    <th>Expiry Date</th>
+                </thead>
+                <tbody>
+                    {% for shop in object_list.qs %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% if product.image %}
+                            <th><img src="{{product.image.url}}" alt="Smiley face" width="50" height="40"></th>
+                        {% endif %}
+                        {% if not product.image %}
+                            <td></td>
+                        {% endif %}
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.shop_id }}</td>
+                        <td>{{ product.purchase_price }}</td>
+                        <td>{{ product.sale_price }}</td>
+                        <td>{{ product.mfg_date }}</td>
+                        <td>{{ product.expiry_date }}</td>
+                        <td>                                
+                            <a href="/shops/{{product.id}}/product_edit">Edit</a>
+                        </td>
+                        <td>                                
+                            <a href="/shops/{{product.id}}/product_detail">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

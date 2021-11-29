@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+<div class="container" style="padding-top: 5%;">
+    <center><h2>{{ object.shop_name }}</h2></center>
+    <a href="/shops/{{shop.id}}/product_list" class="btn btn-primary" style="float: right;">View Products</a>
+    <a href="/shops/{{shop.id}}/create_product" class="btn btn-primary" style="float: right;">Create Product</a>
+    <img src={{ object.image.url }} alt="Smiley face" width="200" height="200">
+    <div style="margin-left: 300px;">
+        <div><b>Owner:-</b> <span style="margin-left: 50px;">{{ object.shop_owner }}</span></div>
+        <div><b>City:-</b> <span style="margin-left: 50px;">{{ object.city }}</span></div>
+        <div><b>Country:-</b> <span style="margin-left: 50px;">{{ object.country }}</span></div>
+        <div><b>Pin Code:-</b> <span style="margin-left: 50px;">{{ object.pin_code }}</span></div>
+        <div><b>Status:-</b> <span style="margin-left: 50px;">{{ object.is_approved }}</span></div>
+    </div>
+</div>
+{% endblock content %}

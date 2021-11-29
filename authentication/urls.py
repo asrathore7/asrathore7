@@ -4,5 +4,5 @@ from .views import UsersList
 
 
 urlpatterns = [
-        path('user_list', UsersList.as_view(), name='userlist'),
+        path('shop_user_list', UsersList.as_view(), name='shopuserlist'),
 ]

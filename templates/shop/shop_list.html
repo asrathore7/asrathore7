@@ -1,0 +1,73 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+<div class="container" style="padding-top: 5%;">
+    <div style="float: right; margin-bottom: 20px;">
+        <form method="get">
+            <span class="float-right">
+            {{ object_list.form.as_p }}
+            </span>
+            <input type="submit" value="Check" class="form-control float-right btn btn-primary"/>
+        </form>
+    </div>
+    <div>
+        <div>
+            <table class="table" style="text-align: center;">
+                <thead>
+                    <th>S No.</th>
+                    <th>Logo</th>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th>City</th>
+                    <th>Zip Code</th>
+                    <th>Country</th>
+                </thead>
+                <tbody>
+                    {% for shop in object_list.qs %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% if shop.image %}
+                            <th><img src="{{shop.image.url}}" alt="Smiley face" width="50" height="40"></th>
+                        {% endif %}
+                        {% if not shop.image %}
+                            <td></td>
+                        {% endif %}
+                        <td>{{ shop.shop_name }}</td>
+                        <td>{{ shop.shop_owner }}</td>
+                        <td>{{ shop.city }}</td>
+                        <td>{{ shop.pin_code }}</td>
+                        <td>{{ shop.country }}</td>
+                        {% if shop.is_approved == True %}
+                            <td>
+                                <form action="/shops/shop_list#{{shop.id}}" method="POST" class="btn-block">
+                                    {% csrf_token %}
+                                    <input hidden type="text" name='shop_unapprove' value='{{shop.id}}'>
+                                    <input type="submit" class="float-right btn btn-danger  form-control"
+                                        value="Unapprove">
+                                </form>
+                            </td>
+                        {% endif %}
+                        {% if shop.is_approved == False %}
+                            <td>
+                                <form action="/shops/shop_list#{{shop.id}}" method="POST" class="btn-block">
+                                    {% csrf_token %}
+                                    <input hidden type="text" name='approve' value='{{shop.id}}'>
+                                    <input type="submit" class="float-right btn btn-light  form-control"
+                                        value="Approve">
+                                </form>
+                            </td>
+                        {% endif %}
+                        <td>                                
+                            <a href="/shops/{{shop.id}}/shop_edit">Edit</a>
+                        </td>
+                        <td>                                
+                            <a href="/shops/{{shop.id}}/shop_detail">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

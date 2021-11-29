@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+<div class="container" style="padding-top: 5%;">
+    <center><h2>{{ object.product_name }}</h2></center>
+    <img src={{ object.image.url }} alt="Smiley face" width="200" height="200">
+    <div style="margin-left: 300px;">
+        <div><b>Shop:-</b> <span style="margin-left: 50px;">{{ object.shop_id }}</span></div>
+        <div><b>Purchase Price:-</b> <span style="margin-left: 50px;">{{ object.purchase_price }}</span></div>
+        <div><b>Sale Price:-</b> <span style="margin-left: 50px;">{{ object.sale_price }}</span></div>
+        <div><b>MFG Date:-</b> <span style="margin-left: 50px;">{{ object.mfg_date }}</span></div>
+        <div><b>Expiry Date:-</b> <span style="margin-left: 50px;">{{ object.expiry_date }}</span></div>
+    </div>
+</div>
+{% endblock content %}
