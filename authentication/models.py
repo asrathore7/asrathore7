@@ -4,6 +4,7 @@ from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.mail import EmailMessage
+from django_countries.fields import CountryField
 
 # @receiver(post_save,sender=settings.AUTH_USER_MODEL)
 # def send_user_data_when_created_by_admin(sender, instance, **kwargs):
@@ -29,3 +30,8 @@ class User(AbstractUser):
     )
     role =  models.CharField(max_length=20, choices=USER_ROLE, default='customer')
     allow_by_admin = models.BooleanField(default=False)
+    street = models.CharField(max_length=30, blank=True)
+    street1 = models.CharField(max_length=30, blank=True)
+    city = models.CharField(max_length=30, blank=True)
+    country = CountryField(max_length=30, blank=True)
+

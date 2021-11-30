@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load cart %}
+
+    <div class="container" style="padding-top: 5%;">
+        <div class="mb-5">
+            <div style="float: left;">
+                <div>Customer Name:- <span>{{ object.username }}</span></div>
+                <div>Address :- <span>{{ object.street }}</span></div>
+                <div>City:- <span>{{ object.city }}</span></div>
+                <div>Country:- <span>{{ object.country }}</span></div>
+            </div>
+            <div style="float: right; margin-bottom: 10px;">
+                <a href="/" class="btn btn-primary">Create Order</a>
+                <a href="/" class="btn btn-primary">Your Orders</a>
+            </div>
+        </div>
+        <div style="margin-top: 150px !important;">
+            <center><h3>Cart</h3></center>
+            <table class="table">
+                <thead>
+                    <th>S No.</th>
+                    <th>Product Name</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </thead>
+                <tbody>
+                    {% for product, qty in orderlines.items %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ qty }}</td>
+                            <td>{{ product.sale_price }}</td>
+                            <td>{% multiply qty product.sale_price %}$</td>
+                            <td style="display: flex;"> 
+                                <form action="customer_details#{{product.id}}" method="POST" >
+                                    {% csrf_token %}
+                                    <input hidden type="text" name='product' value='{{product.id}}'>
+                                    <input hidden type="text" name='remove' value='True'>
+                                    <input type="submit" value="-" class="btn btn-primary" style="width: 35px;">
+                                </form>
+                                <form action="customer_details#{{product.id}}" method="POST">
+                                    {% csrf_token %}
+                                    <input hidden type="text" name='product' value='{{product.id}}'>
+                                    <input type="submit" value="+" class="btn btn-danger">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><b>Total</b></td>
+                        <td><b>{{ total }}$</b></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock content %}

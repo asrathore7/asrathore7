@@ -6,3 +6,4 @@ class UserRoleFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = ['role']
+

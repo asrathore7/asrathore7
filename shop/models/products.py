@@ -10,5 +10,4 @@ class Product(models.Model):
     shop_id = models.ForeignKey(Shop, on_delete=models.CASCADE, blank=True)
     purchase_price = models.PositiveIntegerField(blank=True)
     sale_price = models.PositiveIntegerField(blank=True)
-    mfg_date = models.DateField(blank=True)
-    expiry_date = models.DateField(blank=True)
+    is_published = models.BooleanField(default=False)

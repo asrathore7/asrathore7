@@ -3,13 +3,15 @@
 {% block content %}
 <div class="container" style="padding-top: 5%;">
     <center><h2>{{ object.product_name }}</h2></center>
+    {% if user.is_authenticated and user.role == 'shop' or user.role == 'admin' %}
+        <a href="/shops/{{object.id}}/product_delete" class="btn btn-danger" style="float: right;">Delete Product</a>
+    {% endif %}
     <img src={{ object.image.url }} alt="Smiley face" width="200" height="200">
     <div style="margin-left: 300px;">
-        <div><b>Shop:-</b> <span style="margin-left: 50px;">{{ object.shop_id }}</span></div>
+        <div><b>Shop:-</b> <span style="margin-left: 50px;">{{ object.shop_id.shop_name }}</span></div>
         <div><b>Purchase Price:-</b> <span style="margin-left: 50px;">{{ object.purchase_price }}</span></div>
         <div><b>Sale Price:-</b> <span style="margin-left: 50px;">{{ object.sale_price }}</span></div>
-        <div><b>MFG Date:-</b> <span style="margin-left: 50px;">{{ object.mfg_date }}</span></div>
-        <div><b>Expiry Date:-</b> <span style="margin-left: 50px;">{{ object.expiry_date }}</span></div>
+        <div><b>Status:-</b> <span style="margin-left: 50px;">{{ object.is_published }}</span></div>
     </div>
 </div>
 {% endblock content %}
