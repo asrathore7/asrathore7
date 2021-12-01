@@ -9,6 +9,8 @@ from shop.models.products import Product
 from shop.models.shops import Shop
 from shop.filters import ProductFilter
 from django.http import HttpResponseRedirect
+from order.models import SaleOrder, SaleOrderLine
+import datetime
 
 
 # Create your views here.
@@ -110,3 +112,22 @@ class UsersDetails(DetailView):
             cart[product] = 1
         request.session['cart'] = cart
         return HttpResponseRedirect(self.request.path_info)
+
+def create_order(request, pk):
+    customer = get_user_model().objects.get(pk=pk)
+    cart = request.session.get('cart')
+    if cart:
+        orderlines = {Product.objects.get(pk=line):cart[line] for line in cart}
+        lines = []
+        for line in orderlines:
+            orderline_id = SaleOrderLine(product_id=line, qty=orderlines[line], unit_price=line.sale_price, subtotal=orderlines[line]*line.sale_price)
+            orderline_id.save()
+            lines.append(orderline_id)
+        amount_total = sum([line.subtotal for line in lines])
+        order_id = SaleOrder(customer_id=customer, order_status='new', order_date=datetime.datetime.now(), amount_total=amount_total)
+        order_id.save()
+        for line in lines:
+            order_id.orderline_ids.add(line)
+        request.session['cart'] = {}
+        return redirect('orderdetails', pk=order_id.id)
+    return redirect('home')

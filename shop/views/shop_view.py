@@ -28,9 +28,15 @@ class ShopListView(ListView):
     ordering = ['id']
 
     def get_queryset(self):
-        qs = self.model.objects.all().order_by('id')
-        shop_filtered_list = ShopFilter(self.request.GET, queryset=qs)
-        return shop_filtered_list
+        if self.request.user.role == 'shop':
+            user = self.request.user
+            qs = self.model.objects.filter(shop_owner=user).order_by('id')
+            shop_filtered_list = ShopFilter(self.request.GET, queryset=qs)
+            return shop_filtered_list
+        else:
+            qs = self.model.objects.all().order_by('id')
+            shop_filtered_list = ShopFilter(self.request.GET, queryset=qs)
+            return shop_filtered_list
 
     def post(self, request):
         if self.request.POST.get('shop_unapprove'):

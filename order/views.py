@@ -1,3 +1,37 @@
+from django.db import models
 from django.shortcuts import render
+from .models import SaleOrder, SaleOrderLine
+from django.views.generic import CreateView, UpdateView, DetailView, ListView
+from django.shortcuts import render, redirect
 
-# Create your views here.
+class OrderDetails(DetailView):
+    model = SaleOrder
+    template_name = 'order/order_details.html'
+
+
+class OrderListView(ListView):
+    model = SaleOrder
+    template_name = 'order/order_list.html'
+
+    def get_queryset(self):
+        if self.request.user.role == 'customer':
+            order_objs = self.model.objects.filter(customer_id=self.request.user.id).order_by('id')
+            return order_objs
+        else:
+            order_objs = self.model.objects.all().order_by('id')
+            return order_objs
+
+    def post(self, request):
+        if self.request.POST.get('ship'):
+            order = self.model.objects.get(id = self.request.POST.get('ship'))
+            order.order_status = 'ship'
+            order.save()
+        if self.request.POST.get('deliver'):
+            order = self.model.objects.get(id = self.request.POST.get('deliver'))
+            order.order_status = 'deliver'
+            order.save()
+        if self.request.POST.get('cancel'):
+            order = self.model.objects.get(id = self.request.POST.get('cancel'))
+            order.order_status = 'cancel'
+            order.save()
+        return redirect('orderlist')

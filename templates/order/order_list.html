@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% load socialaccount %}
+
+{% block content %}
+<div class="container" style="padding-top: 5%;">
+    <div>
+        <div>
+            <table class="table" style="text-align: center;">
+                <thead>
+                    <th>S No.</th>
+                    <th>Order No</th>
+                    <th>Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Amount Total</th>
+                    <th>Order Status</th>
+                </thead>
+                <tbody>
+                    {% for order in object_list%}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.customer_id }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>{{ order.amount_total }}</td>
+                            <td>{{ order.order_status }}</td>
+                            {% if user.role == 'shop' and order.order_status == 'new' %}
+                            <td>
+                                <form action="/orders/order_list/" method="POST" class="btn-block">
+                                    {% csrf_token %}
+                                    <input hidden type="text" name='ship' value='{{order.id}}'>
+                                    <input type="submit" class="float-right btn btn-danger  form-control"
+                                        value="Ship">
+                                </form>
+                            </td>
+                            {% endif %}
+                            {% if user.role == 'shop' and order.order_status == 'ship' %}
+                                <td>
+                                    <form action="/orders/order_list/" method="POST" class="btn-block">
+                                        {% csrf_token %}
+                                        <input hidden type="text" name='deliver' value='{{order.id}}'>
+                                        <input type="submit" class="float-right btn btn-danger  form-control"
+                                            value="Deliver">
+                                    </form>
+                                </td>
+                            {% endif %}
+                            {% if user.role == 'shop' and order.order_status == 'deliver' %}
+                                <td>
+                                    <form action="/orders/order_list/" method="POST" class="btn-block">
+                                        {% csrf_token %}
+                                        <input hidden type="text" name='cancel' value='{{order.id}}'>
+                                        <input type="submit" class="float-right btn btn-danger  form-control"
+                                            value="Cancel">
+                                    </form>
+                                </td>
+                            {% endif %}
+                            <td><a href="/orders/order_details/{{order.id}}">View</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

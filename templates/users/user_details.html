@@ -12,11 +12,12 @@
                 <div>Country:- <span>{{ object.country }}</span></div>
             </div>
             <div style="float: right; margin-bottom: 10px;">
-                <a href="/" class="btn btn-primary">Create Order</a>
-                <a href="/" class="btn btn-primary">Your Orders</a>
+                <a href="create_order" class="btn btn-primary">Create Order</a>
+                <a href="/orders/order_list" class="btn btn-primary">Your Orders</a>
             </div>
         </div>
         <div style="margin-top: 150px !important;">
+            {% if orderlines.items %}
             <center><h3>Cart</h3></center>
             <table class="table">
                 <thead>
@@ -59,6 +60,10 @@
                     </tr>
                 </tbody>
             </table>
+            {% endif %}
+            {% if not orderlines.items %}
+                <center><h3>Your cart is empty</h3></center>
+            {% endif %}                
         </div>
     </div>
 

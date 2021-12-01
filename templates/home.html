@@ -28,7 +28,7 @@
 					</div>
 
 					<div class="card-footer p-0 no-gutters">
-                        {% if product|is_in_cart:request.session.cart %}
+                        {% if product|is_in_cart:request.session %}
                     <div class="row no-gutters">
                         <form action="/#{{product.id}}" class="col-2 " method="post">
                             {% csrf_token %}
@@ -36,7 +36,7 @@
                             <input hidden type="text" name='remove' value='True'>
                             <input type="submit" value=" - " class="btn btn-block btn-light border-right">
                         </form>
-                        <div class="text-center col">{{product|cart_quantity:request.session.cart}} in Cart</div>
+                        <div class="text-center col">{{product|cart_quantity:request.session}} in Cart</div>
                         <form action="/#{{product.id}}" class="col-2 " method="post">
                             {% csrf_token %}
                             <input hidden type="text" name='product' value='{{product.id}}'>

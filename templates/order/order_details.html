@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" style="padding-top: 5%;">
+        <div>
+            <div style="float: right;"><button class="btn btn-primary">{{ object.order_status }}</button></div>
+            <div style="margin-left: 300px;">
+                <div><b>Order No:-</b> <span style="margin-left: 50px;">{{ object.id }}</span></div>
+                <div><b>Customer Name:-</b> <span style="margin-left: 50px;">{{ object.customer_id }}</span></div>
+                <div><b>Order Date:-</b> <span style="margin-left: 50px;">{{ object.order_date }}</span></div>
+            </div>
+            <div style="margin-top: 150px !important;">
+                {% if object.orderline_ids %}
+                <center><h3>Orderline</h3></center>
+                <table class="table">
+                    <thead>
+                        <th>S No.</th>
+                        <th>Product Name</th>
+                        <th>Qty</th>
+                        <th style="text-align: right;">Unit Price</th>
+                        <th style="text-align: right;">Subtotal</th>
+                    </thead>
+                    <tbody>
+                        {% for line in object.orderline_ids.all %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ line.product_id.product_name }}</td>
+                                <td>{{ line.qty }}</td>
+                                <td style="text-align: right;">{{ line.unit_price }}</td>
+                                <td style="text-align: right;">{{ line.subtotal }}$</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align: right;"><b>Total</b></td>
+                            <td style="text-align: right;"><b>{{ object.amount_total }}$</b></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% endif %}
+        </div>
+    </div>
+{% endblock %}

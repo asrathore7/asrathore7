@@ -18,7 +18,6 @@ from django.urls import path
 from django.urls.conf import include
 from django.views.generic import TemplateView
 from django.conf import settings
-# from ..shop.models.products import Product
 from django.conf.urls.static import static
 
 
@@ -27,7 +26,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('authentication.urls')),
     path('shops/', include('shop.urls')),
-    # path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('orders/', include('order.urls')),
 ]
 
 if settings.DEBUG:
