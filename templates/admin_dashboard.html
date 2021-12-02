@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <!-- <div id="container" style="width: 75%;">
+    <canvas id="admin-chart" data-url="{% url 'chart' %}"></canvas>
+  </div> -->
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <center><h1>Admin Dashboard</h1></center>
+  <div class="row">
+    <div class="col-md-6">
+      <canvas id="total_order_chart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="total_shop_chart"></canvas>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="pie-chart"></canvas>
+        </div>
+    </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  
+  <script>
+    var endpoint = '/users/dashboard_api';
+  
+    $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(data) {
+        drawBarGraph(data, 'total_order_chart');
+        drawShopBarGraph(data, 'total_shop_chart');
+        drawShoppieChart(data, 'pie-chart');
+        console.log("drawing");
+      },
+      error: function(error_data) {
+        console.log(error_data);
+      }
+    })
+  
+    function drawBarGraph(data, id) {
+      var labels = data.labels;
+      var chartLabel = 'Total Orders in month';
+      var chartdata = data.chartdata;
+      var ctx = document.getElementById(id).getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: chartLabel,
+            data: chartdata,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    }
+    
+    function drawShopBarGraph(data, id) {
+      var labels = data.shop_names;
+      var chartLabel = 'Total Amount of Sale';
+      var chartdata = data.shop_data;
+      var ctx = document.getElementById(id).getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: chartLabel,
+            data: chartdata,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    }
+
+    function drawShoppieChart(data, id) {
+    var ctx = document.getElementById(id).getContext('2d');
+        var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            datasets: [{
+            data: data.shop_data,
+            backgroundColor: [
+                '#ff0000', '#0000ff'],
+            label: 'Population'
+            }],
+            labels: data.shop_names,
+        },
+        options: {
+            responsive: true
+        }
+        });
+    }
+
+ 
+  </script>
+
+{% endblock %}

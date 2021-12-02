@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import UsersList, HomeView, UsersDetails, create_order
+from .views import UsersList, HomeView, UsersDetails, create_order, ChartData, DashboardHomeView, CustomerChartData
 
 
 urlpatterns = [
@@ -8,4 +8,7 @@ urlpatterns = [
         path('users/shop_user_list', UsersList.as_view(), name='shopuserlist'),
         path('users/<pk>/customer_details', UsersDetails.as_view(), name='userdetails'),
         path('users/<pk>/create_order', create_order, name='createorder'),
+        path('users/dashboard', DashboardHomeView.as_view(), name='dashboard'),
+        path('users/dashboard_api', ChartData.as_view(), name='chart'),
+        path('users/customer_dashboard_api', CustomerChartData.as_view(), name='customer_chart'),
 ]

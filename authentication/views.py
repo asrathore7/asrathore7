@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from django.http import response
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -11,7 +12,11 @@ from shop.filters import ProductFilter
 from django.http import HttpResponseRedirect
 from order.models import SaleOrder, SaleOrderLine
 import datetime
-
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.views.generic import View
 
 # Create your views here.
 
@@ -131,3 +136,79 @@ def create_order(request, pk):
         request.session['cart'] = {}
         return redirect('orderdetails', pk=order_id.id)
     return redirect('home')
+
+class DashboardHomeView(View):
+    def get(self, request, *args, **kwargs):
+        # import pdb;pdb.set_trace()
+        if request.user.role == 'admin':
+            return render(request, 'admin_dashboard.html')
+        elif request.user.role == 'customer':
+            return render(request, 'customer_dashboard.html')
+        else:
+            return redirect('home')
+
+class ChartData(APIView):
+
+    def get(self, request):
+        if request.user.role == 'admin':
+            monthly_sale_order = SaleOrder.objects.annotate(month=TruncMonth('order_date')).values('month').annotate(c=Count('id')).values('month', 'c')
+            product_total_sale = SaleOrderLine.objects.values('product_id').annotate(quantity = Sum('qty'),price = Sum('subtotal'))
+            sale_data, label_sale_data = [], []
+            chartLabel = ['January','February', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+            for month in range(1, 13):
+                temp = True
+                for sale in monthly_sale_order:
+                    if month == sale['month'].month:
+                        temp = False
+                        label_sale_data.append(sale['c'])
+                if temp:
+                    label_sale_data.append(0)
+                # sale_data.append(sale['month'].month)
+            shop_names = []
+            for shop in Shop.objects.all():
+                shop_names.append(shop.shop_name)
+            shop_data = {}
+            for shop in shop_names:
+                temp_shop = True
+                for product in product_total_sale:
+                    product_id = Product.objects.get(pk=product['product_id'])
+                    if product_id.shop_id.shop_name == shop:
+                        temp_shop = False
+                        if shop in shop_data.keys():
+                            shop_data[shop] = shop_data[shop]+product['price']
+                        else:
+                            shop_data[shop] = product['price']
+                if temp_shop:
+                    shop_data[shop] = 0
+            data = {
+                'labels':  chartLabel,
+                'chartdata' : label_sale_data,
+                'shop_names' : shop_names,
+                'shopchartLabel': 'Total Amount of Sale',
+                'shop_data' : [val for val in shop_data.values()]
+            }
+            return Response(data)
+        else:
+            return redirect('home')
+
+class CustomerChartData(APIView):
+
+    def get(self, request):
+        user = request.user.id
+        monthly_sale_order = SaleOrder.objects.filter(customer_id=user).annotate(month=TruncMonth('order_date')).values('month').annotate(c=Count('id')).values('month', 'c')
+        product_total_sale = SaleOrderLine.objects.values('product_id').annotate(quantity = Sum('qty'),price = Sum('subtotal'))
+        sale_data, label_sale_data = [], []
+        chartLabel = ['January','February', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+        for month in range(1, 13):
+            temp = True
+            for sale in monthly_sale_order:
+                if month == sale['month'].month:
+                    temp = False
+                    label_sale_data.append(sale['c'])
+            if temp:
+                label_sale_data.append(0)
+        data = {
+                'labels':  chartLabel,
+                'chartdata' : label_sale_data,
+            }
+        return Response(data)

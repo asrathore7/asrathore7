@@ -1,4 +1,5 @@
 from django import template
+from shop.models.shops import Shop
 
 register = template.Library()
 
@@ -39,3 +40,8 @@ def addition(total, qty, unit_price, *args, **kwargs):
     # you would need to do any localization of the result here
     val = qty * unit_price
     return val+total
+
+@register.filter(name='total_shops')
+def total_shops(user, request):
+    return len(Shop.objects.all())
+

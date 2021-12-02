@@ -30,7 +30,7 @@ class ProductListView(ListView):
     template_name = 'product/shop_list.html'
     model = Product
     ordering = ['id']
-    paginate_by = 2
+    paginate_by = 4
 
     def get_queryset(self):
         product_objs = self.model.objects.filter(shop_id=self.request.resolver_match.kwargs['pk']).order_by('id')
