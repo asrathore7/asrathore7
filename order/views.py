@@ -5,11 +5,13 @@ from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.shortcuts import render, redirect
 
 class OrderDetails(DetailView):
+    '''OrderDetails for view'''
     model = SaleOrder
     template_name = 'order/order_details.html'
 
 
 class OrderListView(ListView):
+    '''OrderListView for view'''
     model = SaleOrder
     template_name = 'order/order_list.html'
 

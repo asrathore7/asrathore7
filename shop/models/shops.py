@@ -1,10 +1,11 @@
+'''Shop Model define'''
 from django.db import models
 from django.conf import settings
-from django.db.models import fields
 from django_countries.fields import CountryField
 
 # Create your models here.
 class Shop(models.Model):
+    '''Shop Model'''
     shop_name = models.CharField(max_length=40)
     shop_owner = models.ForeignKey(settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, limit_choices_to={'role': 'shop'})

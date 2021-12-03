@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import TemplateView
 from .views import UsersList, HomeView, UsersDetails, create_order, ChartData, DashboardHomeView, CustomerChartData, ShopChartData
 
 

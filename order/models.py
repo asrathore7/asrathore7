@@ -1,11 +1,9 @@
 from django.db import models
 from django.conf import settings
-from django.views.generic.edit import DeleteView
 from shop.models.products import Product
-from django.views.generic import CreateView, UpdateView, DeleteView
 
 class SaleOrderLine(models.Model):
-    
+    '''Sale Order Line'''
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     qty = models.IntegerField(blank=True)
     unit_price = models.FloatField(blank=True)
@@ -13,7 +11,7 @@ class SaleOrderLine(models.Model):
 
 
 class SaleOrder(models.Model):
-
+    '''Sale Order'''
     status = (
         ('new', 'New'),
         ('ship', 'shipped'),
