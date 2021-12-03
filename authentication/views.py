@@ -144,6 +144,8 @@ class DashboardHomeView(View):
             return render(request, 'admin_dashboard.html')
         elif request.user.role == 'customer':
             return render(request, 'customer_dashboard.html')
+        elif request.user.role == 'shop':
+            return render(request, 'shop_dashboard.html')
         else:
             return redirect('home')
 
@@ -211,4 +213,36 @@ class CustomerChartData(APIView):
                 'labels':  chartLabel,
                 'chartdata' : label_sale_data,
             }
+        return Response(data)
+
+
+
+class ShopChartData(APIView):
+
+    def get(self, request):
+        user = request.user.id
+        product_total_sale = SaleOrderLine.objects.values(
+            'product_id').annotate(quantity = Sum('qty'),price = Sum('subtotal'))
+        shop_names = []
+        for shop in Shop.objects.filter(shop_owner=user):
+            shop_names.append(shop.shop_name)
+        shop_data = {}
+        for shop in shop_names:
+            temp_shop = True
+            for product in product_total_sale:
+                product_id = Product.objects.get(pk=product['product_id'])
+                if product_id.shop_id.shop_name == shop:
+                    temp_shop = False
+                    if shop in shop_data.keys():
+                        shop_data[shop] = shop_data[shop]+product['price']
+                    else:
+                        shop_data[shop] = product['price']
+            if temp_shop:
+                shop_data[shop] = 0
+        data = {
+                'shop_names' : shop_names,
+                'shopchartLabel': 'Total Amount of Sale',
+                'shop_data' : [val for val in shop_data.values()]
+            }
+        # import pdb;pdb.set_trace()
         return Response(data)
