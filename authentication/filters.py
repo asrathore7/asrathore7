@@ -1,3 +1,4 @@
+'''User's Page filters'''
 import django_filters
 from .models import User
 

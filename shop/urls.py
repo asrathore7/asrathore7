@@ -1,8 +1,10 @@
+'''Urls for shop pages'''
 from django.urls import path
-
-from .views.shop_view import ShopCreateView, ShopListView, ShopUpdateView, ShopDetailsView
-
-from .views.product_view import ProductCreateView, ProductListView, ProductUpdateView, ProductDetailsView, ProductDeleteView
+from .views.shop_view import ShopCreateView, \
+        ShopListView, ShopUpdateView, ShopDetailsView
+from .views.product_view import ProductCreateView, \
+        ProductListView, ProductUpdateView, \
+        ProductDetailsView, ProductDeleteView
 
 
 urlpatterns = [

@@ -1,8 +1,8 @@
+'''Product Views'''
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
+from django.urls import reverse_lazy
 from ..models.products import  Product
 from ..models.shops import  Shop
-from django.urls import reverse_lazy
-# Create your views here.
 
 class ProductCreateView(CreateView):
     '''ProductCreateView class'''

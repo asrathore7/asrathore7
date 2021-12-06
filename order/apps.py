@@ -1,5 +1,5 @@
+'''Order's Config'''
 from django.apps import AppConfig
-
 
 class OrderConfig(AppConfig):
     '''Add OrderConfig'''

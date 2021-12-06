@@ -1,7 +1,6 @@
 from allauth.account.forms import SignupForm
 from django import forms
-# from django.db.models.enums import Choices
-from .models import *
+from .models import User
 
 class CustomSignUpForm(SignupForm):
     '''Add CustomSignUpForm'''

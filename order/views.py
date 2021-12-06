@@ -1,8 +1,7 @@
-from django.db import models
-from django.shortcuts import render
-from .models import SaleOrder, SaleOrderLine
-from django.views.generic import CreateView, UpdateView, DetailView, ListView
-from django.shortcuts import render, redirect
+'''Order's view'''
+from django.views.generic import DetailView, ListView
+from django.shortcuts import redirect
+from .models import SaleOrder
 
 class OrderDetails(DetailView):
     '''OrderDetails for view'''
@@ -19,11 +18,11 @@ class OrderListView(ListView):
         if self.request.user.role == 'customer':
             order_objs = self.model.objects.filter(customer_id=self.request.user.id).order_by('id')
             return order_objs
-        else:
-            order_objs = self.model.objects.all().order_by('id')
-            return order_objs
+        order_objs = self.model.objects.all().order_by('id')
+        return order_objs
 
-    def post(self, request):
+    def post(self):
+        '''Change order status'''
         if self.request.POST.get('ship'):
             order = self.model.objects.get(id = self.request.POST.get('ship'))
             order.order_status = 'ship'

@@ -1,3 +1,4 @@
+'''Order's page url'''
 from django.urls import path
 from .views import OrderDetails, OrderListView
 

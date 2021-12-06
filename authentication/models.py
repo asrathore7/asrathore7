@@ -1,9 +1,6 @@
+'''Customize User's model'''
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.core.mail import EmailMessage
 from django_countries.fields import CountryField
 
 # @receiver(post_save,sender=settings.AUTH_USER_MODEL)
@@ -16,13 +13,15 @@ from django_countries.fields import CountryField
 #         address = instance.address
 #         email = instance.user.email
 #         html_content = "your first name:%s <br> last name:%s <br> address:%s"
-#         message=EmailMessage(subject='welcome',body=html_content %(first_name,last_name,address),to=[email])
+#         message=EmailMessage(subject='welcome',
+#           body=html_content %(first_name,last_name,address),to=[email])
 #         message.content_subtype='html'
 #         message.send()
 
 
 # Create your models here.
 class User(AbstractUser):
+    '''Inherit User's model to add cstom fields.'''
     USER_ROLE = (
         ('admin', 'Admin'),
         ('shop', 'Shop User'),
@@ -34,4 +33,3 @@ class User(AbstractUser):
     street1 = models.CharField(max_length=30, blank=True)
     city = models.CharField(max_length=30, blank=True)
     country = CountryField(max_length=30, blank=True)
-

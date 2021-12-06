@@ -1,24 +1,25 @@
+'''User's model'''
+import datetime
 from django.db.models.aggregates import Sum
-from django.http import response
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
-from .filters import UserRoleFilter
+from django.http import HttpResponseRedirect
+from django.views.generic import View
+from django.db.models.functions import TruncMonth
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Count
 from django.views import generic
+from order.models import SaleOrder, SaleOrderLine
 from shop.models.products import Product
 from shop.models.shops import Shop
 from shop.filters import ProductFilter
-from django.http import HttpResponseRedirect
-from order.models import SaleOrder, SaleOrderLine
-import datetime
-from django.db.models.functions import TruncMonth
-from django.db.models import Count
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.views.generic import View
+from .filters import UserRoleFilter
 
 
 class UsersList(ListView):
+    '''User Model list'''
     template_name = 'users/users_list.html'
     model = get_user_model()
     ordering = ['id']
@@ -28,27 +29,27 @@ class UsersList(ListView):
         return context
 
     def get_queryset(self):
-        qs = self.model.objects.all().order_by('id')
+        user_ids = self.model.objects.all().order_by('id')
         user_filtered_list = UserRoleFilter(
-            self.request.GET, queryset=qs)
+            self.request.GET, queryset=user_ids)
         return user_filtered_list
-    
+
     def post(self):
-        User = get_user_model()
+        user = get_user_model()
         if self.request.POST.get('user_unapprove'):
-            users = User.objects.get(
+            users = user.objects.get(
                 id = self.request.POST.get('user_unapprove'))
             users.allow_by_admin = False
             users.save()
         if self.request.POST.get('user'):
-            users = User.objects.get(
+            users = user.objects.get(
                 id = self.request.POST.get('user'))
             users.allow_by_admin = True
             users.save()
         return redirect('userlist')
 
 class HomeView(generic.TemplateView):
-
+    '''Home page template view'''
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         products = Product.objects.filter(is_published=True)
@@ -82,6 +83,7 @@ class HomeView(generic.TemplateView):
         return redirect('home')
 
 class UsersDetails(DetailView):
+    '''User Model Details'''
     template_name = 'users/user_details.html'
     model = get_user_model()
 
@@ -94,12 +96,12 @@ class UsersDetails(DetailView):
             orderlines = {Product.objects.get(
                 pk=line):cart[line] for line in cart}
             total = sum([
-                line.sale_price*orderlines[line] 
+                line.sale_price*orderlines[line] \
                     for line in orderlines])
         context.update({'orderlines' : orderlines, 'total' : total})
         return context
 
-    def post(self, request, pk):
+    def post(self, request):
         product = request.POST.get('product')
         remove = request.POST.get('remove')
         cart = request.session.get('cart')
@@ -122,8 +124,9 @@ class UsersDetails(DetailView):
         request.session['cart'] = cart
         return HttpResponseRedirect(self.request.path_info)
 
-def create_order(request, pk):
-    customer = get_user_model().objects.get(pk=pk)
+def create_order(request, user_id):
+    '''create order from cart'''
+    customer = get_user_model().objects.get(pk=user_id)
     cart = request.session.get('cart')
     if cart:
         orderlines = {
@@ -150,15 +153,17 @@ def create_order(request, pk):
     return redirect('home')
 
 class DashboardHomeView(View):
-    def get(self, request, *args, **kwargs):
+    '''Dashboard Home View'''
+
+    def get(self, request):
+        '''Redirect dashboard according to user role.'''
         if request.user.role == 'admin':
             return render(request, 'admin_dashboard.html')
-        elif request.user.role == 'customer':
+        if request.user.role == 'customer':
             return render(request, 'customer_dashboard.html')
-        elif request.user.role == 'shop':
+        if request.user.role == 'shop':
             return render(request, 'shop_dashboard.html')
-        else:
-            return redirect('home')
+        return redirect('home')
 
 class ChartData(APIView):
     '''ChartData for dashboard'''
@@ -196,7 +201,7 @@ class ChartData(APIView):
                         pk=product['product_id'])
                     if product_id.shop_id.shop_name == shop:
                         temp_shop = False
-                        if shop in shop_data.keys():
+                        if shop in shop_data:
                             shop_data[shop] = shop_data[shop]+product['price']
                         else:
                             shop_data[shop] = product['price']
@@ -207,10 +212,9 @@ class ChartData(APIView):
                 'chartdata' : label_sale_data,
                 'shop_names' : shop_names,
                 'shopchartLabel': 'Total Amount of Sale',
-                'shop_data' : [val for val in shop_data.values()]
+                'shop_data' : [shop_data.values()]
             }
             return Response(data)
-        
         return redirect('home')
 
 class CustomerChartData(APIView):
@@ -241,9 +245,8 @@ class CustomerChartData(APIView):
         return Response(data)
 
 
-
 class ShopChartData(APIView):
-
+    '''Shop Chart Data'''
     def get(self, request):
         user = request.user.id
         product_total_sale = SaleOrderLine.objects.values(
@@ -260,7 +263,7 @@ class ShopChartData(APIView):
                     pk=product['product_id'])
                 if product_id.shop_id.shop_name == shop:
                     temp_shop = False
-                    if shop in shop_data.keys():
+                    if shop in shop_data:
                         shop_data[shop] = shop_data[shop]+product['price']
                     else:
                         shop_data[shop] = product['price']
@@ -269,7 +272,6 @@ class ShopChartData(APIView):
         data = {
                 'shop_names' : shop_names,
                 'shopchartLabel': 'Total Amount of Sale',
-                'shop_data' : [val for val in shop_data.values()]
+                'shop_data' : [shop_data.values()]
             }
-        # import pdb;pdb.set_trace()
         return Response(data)

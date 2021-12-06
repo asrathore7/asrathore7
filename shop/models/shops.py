@@ -7,7 +7,7 @@ from django_countries.fields import CountryField
 class Shop(models.Model):
     '''Shop Model'''
     shop_name = models.CharField(max_length=40)
-    shop_owner = models.ForeignKey(settings.AUTH_USER_MODEL, 
+    shop_owner = models.ForeignKey(settings.AUTH_USER_MODEL, \
         on_delete=models.CASCADE, limit_choices_to={'role': 'shop'})
     image = models.ImageField(upload_to='shop_images', blank=True)
     street = models.CharField(max_length=50, blank=True)

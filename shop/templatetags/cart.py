@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name
+'''Contain functionality of cart.'''
 from django import template
 from shop.models.shops import Shop
 
@@ -37,14 +37,19 @@ def total_cart_quantity(user, session):
 
 @register.simple_tag()
 def multiply(qty, unit_price, *args, **kwargs):
+    '''return subtotal of product.'''
+    print(kwargs, args)
     return qty * unit_price
 
 @register.simple_tag()
 def addition(total, qty, unit_price, *args, **kwargs):
+    '''Count total of all orderline.'''
+    print(kwargs, args)
     val = qty * unit_price
     return val+total
 
 @register.filter(name='total_shops')
 def total_shops(user, request):
+    '''Count all shop'''
     print(user, request)
     return len(Shop.objects.all())
