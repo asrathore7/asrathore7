@@ -2,6 +2,7 @@
 import datetime
 from django.db.models.aggregates import Sum
 from django.shortcuts import redirect, render
+from django.db.models import Count
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
@@ -9,7 +10,6 @@ from django.views.generic import View
 from django.db.models.functions import TruncMonth
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Count
 from django.views import generic
 from order.models import SaleOrder, SaleOrderLine
 from shop.models.products import Product
@@ -25,16 +25,19 @@ class UsersList(ListView):
     ordering = ['id']
 
     def get_context_data(self, **kwargs):
+        '''User Model list'''
         context = super().get_context_data(**kwargs)
         return context
 
     def get_queryset(self):
+        '''User Model list'''
         user_ids = self.model.objects.all().order_by('id')
         user_filtered_list = UserRoleFilter(
             self.request.GET, queryset=user_ids)
         return user_filtered_list
 
     def post(self):
+        '''User Model list'''
         user = get_user_model()
         if self.request.POST.get('user_unapprove'):
             users = user.objects.get(
@@ -50,6 +53,8 @@ class UsersList(ListView):
 
 class HomeView(generic.TemplateView):
     '''Home page template view'''
+    # pylint: disable=no-member
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         products = Product.objects.filter(is_published=True)
@@ -60,6 +65,8 @@ class HomeView(generic.TemplateView):
         return context
 
     def post(self, request):
+        # pylint: disable=no-self-use
+        '''Home page template view'''
         product = request.POST.get('product')
         remove = request.POST.get('remove')
         cart = request.session.get('cart')
@@ -84,10 +91,12 @@ class HomeView(generic.TemplateView):
 
 class UsersDetails(DetailView):
     '''User Model Details'''
+    # pylint: disable=no-member
     template_name = 'users/user_details.html'
     model = get_user_model()
 
     def get_context_data(self, **kwargs):
+        '''User Model Details'''
         context = super().get_context_data(**kwargs)
         cart = self.request.session.get('cart')
         orderlines = {}
@@ -102,6 +111,7 @@ class UsersDetails(DetailView):
         return context
 
     def post(self, request):
+        '''User Model Details to manage cart'''
         product = request.POST.get('product')
         remove = request.POST.get('remove')
         cart = request.session.get('cart')
@@ -125,6 +135,7 @@ class UsersDetails(DetailView):
         return HttpResponseRedirect(self.request.path_info)
 
 def create_order(request, user_id):
+    # pylint: disable=no-member
     '''create order from cart'''
     customer = get_user_model().objects.get(pk=user_id)
     cart = request.session.get('cart')
@@ -156,6 +167,7 @@ class DashboardHomeView(View):
     '''Dashboard Home View'''
 
     def get(self, request):
+        # pylint: disable=no-self-use
         '''Redirect dashboard according to user role.'''
         if request.user.role == 'admin':
             return render(request, 'admin_dashboard.html')
@@ -167,7 +179,13 @@ class DashboardHomeView(View):
 
 class ChartData(APIView):
     '''ChartData for dashboard'''
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=no-member
+
     def get(self, request):
+        # pylint: disable=no-self-use
+        # pylint: disable-msg=too-many-locals
+        '''Prepare Admin Chart Data'''
         if request.user.role == 'admin':
             monthly_sale_order = SaleOrder.objects.annotate(
                 month=TruncMonth('order_date')).values(
@@ -219,7 +237,10 @@ class ChartData(APIView):
 
 class CustomerChartData(APIView):
     '''CustomerChartData for dashboard'''
+    # pylint: disable=no-member
+    # pylint: disable=no-self-use
     def get(self, request):
+        '''Prepare Customer Char Data'''
         user = request.user.id
         monthly_sale_order = SaleOrder.objects.filter(
             customer_id=user).annotate(month=TruncMonth(
@@ -247,7 +268,11 @@ class CustomerChartData(APIView):
 
 class ShopChartData(APIView):
     '''Shop Chart Data'''
+    # pylint: disable=no-member
+    # pylint: disable=no-self-use
+
     def get(self, request):
+        '''Prepare Shop Chart Data'''
         user = request.user.id
         product_total_sale = SaleOrderLine.objects.values(
             'product_id').annotate(

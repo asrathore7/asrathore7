@@ -7,8 +7,8 @@ from .views import UsersList, HomeView, UsersDetails, \
 urlpatterns = [
         path('', HomeView.as_view(template_name='home.html'), name='home'),
         path('users/shop_user_list', UsersList.as_view(), name='shopuserlist'),
-        path('users/customer_details', UsersDetails.as_view(), name='userdetails'),
-        path('users/<user_id>/create_order', create_order, name='createorder'),
+        path('users/<pk>/customer_details', UsersDetails.as_view(), name='userdetails'),
+        path('users/<pk>/create_order', create_order, name='createorder'),
         path('users/dashboard', DashboardHomeView.as_view(), name='dashboard'),
         path('users/dashboard_api', ChartData.as_view(), name='chart'),
         path('users/customer_dashboard_api', CustomerChartData.as_view(), name='customer_chart'),

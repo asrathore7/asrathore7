@@ -11,20 +11,22 @@ class OrderDetails(DetailView):
 
 class OrderListView(ListView):
     '''OrderListView for view'''
+    # pylint: disable=no-member
     model = SaleOrder
     template_name = 'order/order_list.html'
 
     def get_queryset(self):
+        val = super().get_queryset()
         if self.request.user.role == 'customer':
-            order_objs = self.model.objects.filter(customer_id=self.request.user.id).order_by('id')
+            order_objs = val.filter(customer_id=self.request.user.id).order_by('id')
             return order_objs
-        order_objs = self.model.objects.all().order_by('id')
+        order_objs = val.order_by('id')
         return order_objs
 
-    def post(self):
+    def post(self, pk):
         '''Change order status'''
         if self.request.POST.get('ship'):
-            order = self.model.objects.get(id = self.request.POST.get('ship'))
+            order = SaleOrder.objects.get(id=self.request.POST.get('ship'))
             order.order_status = 'ship'
             order.save()
         if self.request.POST.get('deliver'):
