@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  db:
+    restart: always
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER="deq1"
+      - POSTGRES_PASSWORD="deq1p"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "postgres" ,"ping", "-h", "db"]
+      timeout: 20s
+      retries: 10
+  web:
+    build: .
+    command: python /code/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

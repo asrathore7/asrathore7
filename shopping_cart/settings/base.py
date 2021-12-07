@@ -1,6 +1,10 @@
 '''Contain base details of project'''
 from pathlib import Path
 import os
+# import environ
+# env = environ.Env()
+# env.read_env(env.str('ENV_PATH', 'dev.env'))
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -66,11 +70,12 @@ WSGI_APPLICATION = 'shopping_cart.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'shopp11',
-        'USER': 'pguser',
-        'PASSWORD': 'pg@123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': "shopp22",
+        'USER': "deq1",
+        'PASSWORD': "deq1p",
+        'HOST': "db",
+        'PORT': "5432",
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
 
@@ -152,4 +157,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'Ashwindjango@gmail.com'
 EMAIL_HOST_PASSWORD = 'Ashwin@123'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Custom added end
